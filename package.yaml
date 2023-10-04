@@ -25,6 +25,11 @@ dependencies:
 - containers
 - transformers
 - equivalence
+- array
+  
+build-tools:
+- alex
+- happy
 
 ghc-options:
 - -Wall

@@ -6,8 +6,10 @@ module AST
     , Term(..)
     , Variable(..)
     , Symbol(..)) where
-
+    
+import Prelude hiding (pred)
 import qualified Data.Text as T
+import Data.List (intercalate)
 
 type Program = [Clause]
 
@@ -28,3 +30,19 @@ data Variable = Variable T.Text Int
 
 newtype Symbol = Symbol T.Text
   deriving (Eq, Ord)
+  
+instance Show Symbol where
+  show (Symbol sym) = "\"" <> T.unpack sym <> "\""
+
+instance Show Variable where
+  show (Variable var n) = T.unpack var <> show n
+  
+instance Show Term where
+  show (Var var) = show var
+  show (Sym sym) = show sym
+  
+instance Show Predicate where
+  show (Predicate pred) = T.unpack pred
+
+instance Show Atom where
+  show (Atom pred terms) = show pred <> "(" <> intercalate ", " (show <$> terms) <> ")"
