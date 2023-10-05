@@ -27,10 +27,10 @@ drive prog = go S.empty
                then kb
                else go kb'
 
-step :: KnowledgeBase -> Program -> S.Set Atom
+step :: KnowledgeBase -> Program -> KnowledgeBase
 step kb clauses = S.unions $ kb:(stepClause kb <$> clauses)
 
-stepClause :: KnowledgeBase -> Clause -> S.Set Atom
+stepClause :: KnowledgeBase -> Clause -> KnowledgeBase
 stepClause kb (Clause head body) =
   S.map (normaliseFact . applySubst head) substs
   where
@@ -38,23 +38,21 @@ stepClause kb (Clause head body) =
 
 evalAtom
   :: KnowledgeBase -> S.Set Substitution -> Atom -> FreshM (S.Set Substitution)
-evalAtom kb substs atom = foldM considerSubst S.empty substs
+evalAtom kb substs atom = S.fromList <$> foldM considerSubst [] substs
   where
     considerSubst acc subst = do
       -- Specialise the atom before doing unification, this is not a must but
       -- database literature shows that it is more performant in general. In
       -- our case, it'll likely means fewer things will need to be unified.
       let atom' = applySubst atom subst
-      substs' <- foldM (considerFact atom') acc kb
+      substs' <- foldM (considerFact atom') [] kb
       -- The resulting substitutions are an extension to the given.
-      pure $ S.map (compSubst subst) substs'
+      let substs'' = compSubst subst <$> substs'
+      pure $ substs'' <> acc
 
     considerFact atom' acc fact = do
       substMaybe <- unify atom' fact
-      pure
-        $ case substMaybe of
-          Just subst2 -> S.insert subst2 acc
-          Nothing     -> acc
+      pure $ maybe acc (: acc) substMaybe
 
 -- p(X,X) ~ p(42,43) = Nothing
 -- p(X,X) ~ p(42,42) = Just [42/X]
