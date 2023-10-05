@@ -15,7 +15,7 @@ $alpha = [a-zA-Z]       -- alphabetic characters
 tokens :-
   $white+                        ;
   \%.*                           ;
-  \".*\"                         { \s -> TSymbol (stripSymbolLiteral s) }
+  \"[^\"]*\"                     { \s -> TSymbol (stripSymbolLiteral s) }
   :\-                            { \_ -> TImplication }
   \.                             { \_ -> TDot }
   \,                             { \_ -> TComma }
