@@ -37,14 +37,14 @@ Atom : id '(' ')'           { Atom (Predicate $1) [] }
     
 Terms :: { [ Term ] }
 Terms : Term                { [ $1 ] }
-      | Terms Term          { $2 : $1 }
+      | Terms ',' Term      { $3 : $1 }
       
 Term :: { Term }
 Term : sym                  { Sym $ Symbol $ $1 }
      | id                   { Var $ Variable $1 0 }
 {
 parseError :: [Token] -> a
-parseError _ = error "Parse error"
+parseError tokens = error $ "Parse error, here are the tokens:\n" <> show tokens
 
 parse = reverse . parse1
 }

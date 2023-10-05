@@ -1,0 +1,5 @@
+p("abc").
+p("def").
+q("abc").
+p("abc").
+q("abc").

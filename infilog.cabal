@@ -78,10 +78,13 @@ test-suite infilog-test
       alex
     , happy
   build-depends:
-      array
+      Diff
+    , array
     , base >=4.7 && <5
     , containers
+    , directory
     , equivalence
+    , filepath
     , infilog
     , text
     , transformers

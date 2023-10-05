@@ -65,4 +65,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - filepath
+    - directory
+    - Diff
     - infilog

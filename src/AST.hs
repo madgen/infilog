@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 module AST
     ( Program
     , Clause(..)
@@ -7,7 +8,7 @@ module AST
     , Variable(..)
     , Symbol(..)) where
     
-import Prelude hiding (pred)
+import Prelude hiding (pred, head)
 import qualified Data.Text as T
 import Data.List (intercalate)
 
@@ -46,3 +47,10 @@ instance Show Predicate where
 
 instance Show Atom where
   show (Atom pred terms) = show pred <> "(" <> intercalate ", " (show <$> terms) <> ")"
+  
+instance Show Clause where
+  show (Clause head []) = show head <> "."
+  show (Clause head body) = show head <> " :- " <> intercalate ", " (show <$> body) <> "."
+
+instance {-# OVERLAPPING #-} Show Program where
+  show clauses = intercalate "\n" $ show <$> clauses

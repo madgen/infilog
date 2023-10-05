@@ -1,0 +1,1 @@
+fromList [adviser("Andy Hopper", "Andy Rice"),adviser("Andy Rice", "Mistral Contrastin"),adviser("David Wheeler", "Andy Hopper"),ancestor("Andy Hopper", "Andy Rice", 0),ancestor("Andy Rice", "Mistral Contrastin", 0),ancestor("David Wheeler", "Andy Hopper", 0)]
