@@ -1,0 +1,11 @@
+lt(x, "top").
+lt("bottom", x).
+
+one_less_than_two() :- lt("1","2").
+two_less_than_three() :- lt("2","3").
+
+one_less_than_top() :- lt("1","top").
+two_less_than_top() :- lt("2","top").
+
+bottom_less_than_one() :- lt("bottom","1").
+bottom_less_than_two() :- lt("bottom","2").
