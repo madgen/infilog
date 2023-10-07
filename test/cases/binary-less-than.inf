@@ -1,4 +1,4 @@
-% Implement 4-bit binary less than relation using 22 facts than 256.
+% Implement 4-bit binary less than relation using 20 facts than 256.
 
 lt1("0",  "1").
 
