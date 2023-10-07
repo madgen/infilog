@@ -122,14 +122,14 @@ specialiseTerms :: [Term] -> FreshM [Term]
 specialiseTerms terms = St.evalStateT (traverse go terms) M.empty
   where
     go t@Sym {} = pure t
-    go (Var (Variable name _)) = do
+    go (Var (Variable name n)) = do
       mapping <- St.get
-      case name `M.lookup` mapping of
-        Just n  -> pure $ Var (Variable name n)
+      case (name, n) `M.lookup` mapping of
+        Just n'  -> pure $ Var (Variable name n')
         Nothing -> do
           ctr <- lift St.get
           lift $ St.put $ ctr + 1
-          St.put (M.insert name ctr mapping)
+          St.put (M.insert (name, n) ctr mapping)
           pure $ Var (Variable name ctr)
 
 -- We do capture avoiding substitution through renaming and syntactically allow
