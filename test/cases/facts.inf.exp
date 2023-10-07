@@ -1,1 +1,3 @@
-fromList [p("abc"),p("def"),q("abc")]
+p("abc")
+p("def")
+q("abc")
