@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleInstances #-}
-module AST
+module IntermediateRepresentation
     ( Program
     , Clause(..)
     , Atom(..)

@@ -5,7 +5,7 @@ module Naive (drive) where
 import           Prelude hiding (head)
 import qualified Data.Set as S
 import qualified Data.Map.Strict as M
-import           AST
+import           IntermediateRepresentation
 import qualified Data.Equivalence.Monad as EM
 import           Data.Traversable (forM)
 import           Data.Maybe (catMaybes, fromMaybe)

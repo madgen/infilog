@@ -1,7 +1,7 @@
 {
 module Parser (parse) where
 
-import AST
+import IntermediateRepresentation
 import Lexer
 }
 %name parse1
