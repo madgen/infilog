@@ -1,7 +1,7 @@
 {
 module Parser (parse) where
 
-import IntermediateRepresentation
+import AST
 import Lexer
 }
 %name parse1
@@ -20,8 +20,8 @@ import Lexer
 %%
 
 Program :: { Program }
-Program : Clause            { [ $1 ] }
-        | Program Clause    { $2 : $1 }
+Program : Clause            { [ EClause $1 ] }
+        | Program Clause    { EClause $2 : $1 }
 
 Clause :: { Clause }
 Clause : Atom '.'           { Clause $1 [] }
@@ -40,8 +40,8 @@ Terms : Term                { [ $1 ] }
       | Terms ',' Term      { $3 : $1 }
       
 Term :: { Term }
-Term : sym                  { Sym $ Symbol $ $1 }
-     | id                   { Var $ Variable $1 0 }
+Term : sym                  { Sym $ Symbol $1 }
+     | id                   { Var $ Variable $1 }
 {
 parseError :: [Token] -> a
 parseError tokens = error $ "Parse error, here are the tokens:\n" <> show tokens

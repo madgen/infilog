@@ -6,9 +6,10 @@ import           Control.Monad (when)
 import           System.Directory (listDirectory, doesFileExist)
 import           System.FilePath ((</>))
 import           System.Exit (exitFailure)
-import           IntermediateRepresentation (Program)
+import           AST (Program)
 import           Lexer (lex)
 import           Parser (parse)
+import           Compiler (compile)
 import           Naive (drive)
 import           Data.String (lines)
 import           Data.Algorithm.Diff (getGroupedDiff)
@@ -23,7 +24,7 @@ main = do
     $ \source -> do
       contents <- TIO.readFile source
       let ast = parse $ lex contents
-      let solution = Naive.drive ast
+      let solution = Naive.drive . compile $ ast
       let actualOutput = show solution
       let expPath = mkExpPath source
       mExpOutput <- readExpFile expPath
