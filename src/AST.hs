@@ -9,6 +9,7 @@ module AST
     , IR.Predicate(..)
     , IR.Symbol(..)
     , Variable(..)
+    , Constructor(..)
     , Term(..)) where
     
 import Prelude hiding (pred, head)
@@ -22,7 +23,7 @@ data Entity = EClause Clause | EDeclaration Declaration
 
 data Declaration = Declaration Ty [(Constructor, [Ty])]
 
-data Ty = TySymbol | TyComposite Constructor [Ty] 
+data Ty = TySymbol | TyComposite Constructor
 
 data Clause = Clause Atom [Atom]
 
@@ -60,8 +61,8 @@ instance Show Clause where
   
 instance Show Ty where
   show TySymbol = "Symbol"
-  show (TyComposite cstr tys) = show cstr <> " of " <> intercalate " * " (show <$> tys)
-  
+  show (TyComposite cstr) = show cstr
+
 instance Show Declaration where
   show (Declaration ty cstrs) = "type " <> show ty <> " = " <> intercalate " | " (show <$> cstrs)
   

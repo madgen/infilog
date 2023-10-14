@@ -21,6 +21,11 @@ tokens :-
   \,                             { \_ -> TComma }
   \(                             { \_ -> TLeftPar }
   \)                             { \_ -> TRightPar }
+  \=                             { \_ -> TEqual }
+  \|                             { \_ -> TBar }
+  \*                             { \_ -> TStar }
+  of                             { \_ -> TOf }
+  type                           { \_ -> TType }
   $alpha [$alpha $digit \_ \']*  { \s -> TId s }
 
 {
@@ -30,6 +35,11 @@ data Token =
   | TImplication
   | TDot
   | TComma
+  | TEqual
+  | TOf
+  | TType
+  | TBar
+  | TStar
   | TSymbol T.Text
   | TId T.Text
   deriving (Eq, Show)
