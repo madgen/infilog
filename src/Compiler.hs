@@ -21,7 +21,7 @@ compileAtom (A.Atom pred terms) = IR.Atom pred (compileTerm <$> terms)
 compileTerm :: A.Term -> IR.Term
 compileTerm (A.Sym sym) = IR.Sym sym
 compileTerm (A.Var var) = IR.Var $ compileVariable var
-compileTerm (A.Composite _ _) = error "not yet handled"
+compileTerm A.Composite{} = error "not yet handled"
 
 compileVariable :: A.Variable -> IR.Variable
 compileVariable (A.Variable var) = IR.Variable var 0

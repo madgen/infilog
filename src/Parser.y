@@ -48,7 +48,7 @@ Types : Type                                 { [ $1 ] }
       | Types '*' Type                       { $3 : $1 }
       
 Type :: { Ty }
-Type : id                                    { if $1 == "Symbol" then TySymbol else TyComposite (Constructor $1) }
+Type : id                                    { if $1 == "Symbol" then TySymbol else TyComposite (TyName $1) }
 
 Clause :: { Clause }
 Clause : Atom '.'                            { Clause $1 [] }
@@ -69,7 +69,7 @@ Terms : Term                                 { [ $1 ] }
 Term :: { Term }
 Term : sym                                   { Sym $ Symbol $1 }
      | id                                    { Var $ Variable $1 }
-     | id '(' Terms ')'                      { Composite (Constructor $1) $3 }
+     | id '.' id '(' Terms ')'               { Composite (TyComposite $ TyName $1) (Constructor $3) $5 }
 {
 parseError :: [Token] -> a
 parseError tokens = error $ "Parse error, here are the tokens:\n" <> show tokens
