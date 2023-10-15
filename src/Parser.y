@@ -37,7 +37,7 @@ Entity :
        
 Declaration :: { Declaration }
 Declaration :
-    type Type '=' Constructors     { Declaration $2 (reverse $4) }
+    type id '=' Constructors       { Declaration (TyName $2) (reverse $4) }
 
 Constructors :: { [ConstructorDeclaration] }
 Constructors :
@@ -82,7 +82,7 @@ Term :: { Term }
 Term :
     sym                            { Sym $ Symbol $1 }
   | id                             { Var $ Variable $1 }
-  | id '.' id '(' Terms ')'        { Composite (TyComposite $ TyName $1) (Constructor $3) $5 }
+  | id '.' id '(' Terms ')'        { Composite (TyName $1) (Constructor $3) $5 }
 {
 parseError :: [Token] -> a
 parseError tokens = error $ "Parse error, here are the tokens:\n" <> show tokens

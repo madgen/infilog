@@ -1,6 +1,7 @@
 {-# LANGUAGE LambdaCase #-}
 module Decl
-  ( TypeInfo(..)
+  ( DeclStore
+  , TypeInfo(..)
   , declare
   ) where
 
@@ -17,12 +18,12 @@ data TypeInfo = TypeInfo
   { _numberOfParameters :: Int
   , _constructorStore :: ConstructorStore
   }
-type DeclStore = M.Map Ty TypeInfo
+type DeclStore = M.Map TyName TypeInfo
 
 declare :: Program -> Either String DeclStore
 declare entities = do
   let decls = mapMaybe (\case { EClause _ -> Nothing; EDeclaration decl -> Just decl }) entities
-  let allowedTys = S.fromList $ TySymbol : ((\(Declaration ty _) -> ty) <$> decls)
+  let allowedTys = S.fromList $ TySymbol : ((\(Declaration ty _) -> TyComposite ty) <$> decls)
   foldM (declareTy allowedTys) M.empty decls
 
 declareTy :: S.Set Ty -> DeclStore -> Declaration -> Either String DeclStore

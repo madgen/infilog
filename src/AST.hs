@@ -23,7 +23,7 @@ type Program = [Entity]
 
 data Entity = EClause Clause | EDeclaration Declaration
 
-data Declaration = Declaration Ty [ConstructorDeclaration]
+data Declaration = Declaration TyName [ConstructorDeclaration]
 
 data ConstructorDeclaration = ConstructorDeclaration Constructor [Ty]
 
@@ -40,7 +40,7 @@ data Atom = Atom IR.Predicate [Term]
 
 data Term = Sym IR.Symbol
           | Var Variable
-          | Composite Ty Constructor [ Term ]
+          | Composite TyName Constructor [ Term ]
   deriving (Eq, Ord)
 
 newtype Variable = Variable T.Text
