@@ -3,6 +3,7 @@ module AST
     ( Program
     , Entity(..)
     , Declaration(..)
+    , ConstructorDeclaration(..)
     , Ty(..)
     , TyName(..)
     , Clause(..)
@@ -22,7 +23,9 @@ type Program = [Entity]
 
 data Entity = EClause Clause | EDeclaration Declaration
 
-data Declaration = Declaration Ty [(Constructor, [Ty])]
+data Declaration = Declaration Ty [ConstructorDeclaration]
+
+data ConstructorDeclaration = ConstructorDeclaration Constructor [Ty]
 
 data Ty = TySymbol | TyComposite TyName
   deriving (Eq, Ord)
@@ -70,6 +73,10 @@ instance Show TyName where
 instance Show Ty where
   show TySymbol = "Symbol"
   show (TyComposite tyName) = show tyName
+
+instance Show ConstructorDeclaration where
+  show (ConstructorDeclaration cstr []) = show cstr
+  show (ConstructorDeclaration cstr tys) = show cstr <> " of " <> intercalate " * " (show <$> tys)
 
 instance Show Declaration where
   show (Declaration ty cstrs) = "type " <> show ty <> " = " <> intercalate " | " (show <$> cstrs)

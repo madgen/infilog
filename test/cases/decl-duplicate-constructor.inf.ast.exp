@@ -1,2 +1,2 @@
-type T = (CT1,[]) | (CT2,[])
-type U = (CU1,[]) | (CU2,[]) | (CU1,[]) | (CU3,[])
+type T = CT1 | CT2
+type U = CU1 | CU2 | CU1 | CU3

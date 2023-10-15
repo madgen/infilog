@@ -26,8 +26,8 @@ declareTy declaredTys store (Declaration ty cstrs) = do
       cstrStore <- foldM (declareConstructor declaredTys) M.empty cstrs
       pure $ M.insert ty cstrStore store
 
-declareConstructor :: S.Set Ty -> ConstructorStore -> (Constructor, [Ty]) -> Either String ConstructorStore
-declareConstructor declaredTys cstrStore (cstr, tys) =
+declareConstructor :: S.Set Ty -> ConstructorStore -> ConstructorDeclaration -> Either String ConstructorStore
+declareConstructor declaredTys cstrStore (ConstructorDeclaration cstr tys) =
   -- Check that we're not redeclaring a constructor within a given type declaration.
   case cstr `M.lookup` cstrStore of
     Just _ -> Left $ "The constructor `" <> show cstr <> "` is already declared"

@@ -36,13 +36,13 @@ Entity : Clause                              { EClause $1 }
 Declaration :: { Declaration }
 Declaration : type Type '=' Constructors     { Declaration $2 (reverse $4) }
 
-Constructors :: { [(Constructor, [Ty])] }
+Constructors :: { [ConstructorDeclaration] }
 Constructors : Constructor                   { [ $1 ] }
              | Constructors '|' Constructor  { $3 : $1 }
              
-Constructor :: { (Constructor, [Ty]) }
-Constructor : id of Types                    { (Constructor $1, reverse $3) }
-Constructor : id                             { (Constructor $1, []) }
+Constructor :: { ConstructorDeclaration }
+Constructor : id of Types                    { ConstructorDeclaration (Constructor $1) (reverse $3) }
+Constructor : id                             { ConstructorDeclaration (Constructor $1) [] }
             
 Types :: { [Ty] }
 Types : Type                                 { [ $1 ] }
