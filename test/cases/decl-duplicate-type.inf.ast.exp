@@ -1,0 +1,4 @@
+type T1 = (Z,[])
+type N = (Z,[])
+type T2 = (Z,[])
+type N = (Z,[])

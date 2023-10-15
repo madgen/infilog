@@ -14,8 +14,8 @@ type DeclStore = M.Map Ty ConstructorStore
 declare :: Program -> Either String DeclStore
 declare entities = do
   let decls = mapMaybe (\case { EClause _ -> Nothing; EDeclaration decl -> Just decl }) entities
-  let declaredTys = S.fromList $ (\(Declaration ty _) -> ty) <$> decls
-  foldM (declareTy declaredTys) M.empty decls
+  let allowedTys = S.fromList $ TySymbol : ((\(Declaration ty _) -> ty) <$> decls)
+  foldM (declareTy allowedTys) M.empty decls
 
 declareTy :: S.Set Ty -> DeclStore -> Declaration -> Either String DeclStore
 declareTy declaredTys store (Declaration ty cstrs) = do

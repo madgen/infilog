@@ -1,0 +1,2 @@
+type T1 = (C,[T2,Symbol])
+type T2 = (C,[T1,T3])

@@ -1,0 +1,2 @@
+type T1 = C of T2 * Symbol
+type T2 = C of T1 * T3
