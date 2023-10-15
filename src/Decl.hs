@@ -1,14 +1,15 @@
 {-# LANGUAGE LambdaCase #-}
 module Decl (declare) where
 
-import qualified Data.Map as M
+import qualified Data.Map.Strict as M
 import AST
 import Control.Monad (foldM, unless)
 import Data.Maybe (mapMaybe)
 import qualified Data.Set as S
 import Data.Foldable (traverse_)
+import qualified Data.IntMap.Strict as IM
 
-type ConstructorStore = M.Map Constructor [Ty]
+type ConstructorStore = M.Map Constructor (IM.IntMap Ty)
 type DeclStore = M.Map Ty ConstructorStore
 
 declare :: Program -> Either String DeclStore
@@ -34,4 +35,5 @@ declareConstructor declaredTys cstrStore (ConstructorDeclaration cstr tys) =
     Nothing -> do
       -- Check that the types used as parameter exist.
       traverse_ (\ty -> unless (S.member ty declaredTys) (Left $ "The type `" <> show ty <> "` doesn't exist.")) tys
-      pure $ M.insert cstr tys cstrStore
+      let paramMap = IM.fromList $ zip [0..] tys
+      pure $ M.insert cstr paramMap cstrStore
