@@ -58,6 +58,7 @@ instance Show Constructor where
 instance Show Term where
   show (Sym sym) = show sym
   show (Var var) = show var
+  show (Composite ty cstr []) = show ty <> "." <> show cstr
   show (Composite ty cstr terms) = show ty <> "." <> show cstr <> "(" <> intercalate ", " (show <$> terms) <> ")"
   
 instance Show Atom where

@@ -82,6 +82,7 @@ Term :: { Term }
 Term :
     sym                            { Sym $ Symbol $1 }
   | id                             { Var $ Variable $1 }
+  | id '.' id                      { Composite (TyName $1) (Constructor $3) [] }
   | id '.' id '(' Terms ')'        { Composite (TyName $1) (Constructor $3) $5 }
 {
 parseError :: [Token] -> a

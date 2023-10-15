@@ -1,0 +1,2 @@
+type U = CU
+p(U.CU).
