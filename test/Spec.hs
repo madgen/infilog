@@ -16,6 +16,7 @@ import           Data.Algorithm.Diff (getGroupedDiff)
 import           Data.Algorithm.DiffOutput (ppDiff)
 import qualified Data.Text.IO as TIO
 import qualified Data.Text as T
+import Decl (declare)
 
 main :: IO ()
 main = do
@@ -32,10 +33,20 @@ main = do
       let expPath = mkExpPath source "ast"
       validateTestOutput'' expPath actualOutput
       
-      let solution = Naive.drive . compile $ ast
-      let actualOutput = show solution
-      let expPath = mkExpPath source "naive"
-      validateTestOutput'' expPath actualOutput
+      case declare ast of
+        Left errMsg -> do
+          let actualOutput = errMsg
+          let expPath = mkExpPath source "decl"
+          validateTestOutput'' expPath actualOutput
+        Right _decls -> do
+          let actualOutput = "There are no decl errors"
+          let expPath = mkExpPath source "decl"
+          validateTestOutput'' expPath actualOutput
+
+          let solution = Naive.drive . compile $ ast
+          let actualOutput = show solution
+          let expPath = mkExpPath source "naive"
+          validateTestOutput'' expPath actualOutput
   failed <- readIORef failingRef
   when failed exitFailure
 
