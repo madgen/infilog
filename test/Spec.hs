@@ -42,8 +42,13 @@ main = do
           let actualOutput = "There are no decl errors"
           let expPath = mkExpPath source "decl"
           validateTestOutput'' expPath actualOutput
+          
+          let ir = compile decls ast
+          let actualOutput = show ir
+          let expPath = mkExpPath source "ir"
+          validateTestOutput'' expPath actualOutput
 
-          let solution = Naive.drive . compile decls $ ast
+          let solution = Naive.drive ir
           let actualOutput = show solution
           let expPath = mkExpPath source "naive"
           validateTestOutput'' expPath actualOutput
