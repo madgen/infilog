@@ -26,7 +26,7 @@ main = do
       let ast = parse $ lex contents
       let solution = Naive.drive . compile $ ast
       let actualOutput = show solution
-      let expPath = mkExpPath source
+      let expPath = mkExpPath source "naive"
       mExpOutput <- readExpFile expPath
       case mExpOutput of
         Just expOutput -> when (expOutput /= actualOutput)
@@ -51,8 +51,8 @@ main = do
   failed <- readIORef failingRef
   when failed exitFailure
 
-mkExpPath :: FilePath -> FilePath
-mkExpPath source = source <> ".exp"
+mkExpPath :: FilePath -> String -> FilePath
+mkExpPath source suffix = source <> "." <> suffix <> ".exp"
 
 readExpFile :: FilePath -> IO (Maybe String)
 readExpFile expPath = do
