@@ -1,0 +1,5 @@
+adviser("Andy Rice", "Mistral Contrastin").
+adviser("Andy Hopper", "Andy Rice").
+adviser("David Wheeler", "Andy Hopper").
+ancestor(x, y) :- adviser(x, y).
+ancestor(x, z) :- ancestor(x, y), adviser(y, z).

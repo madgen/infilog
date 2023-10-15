@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 import           Prelude hiding (lines, id, lex)
 import           Data.Foldable (traverse_)
 import           Data.IORef (newIORef, writeIORef, readIORef, IORef)
@@ -27,6 +28,10 @@ main = do
       let validateTestOutput'' = validateTestOutput' source contents
 
       let ast = parse $ lex contents
+      let actualOutput = show ast 
+      let expPath = mkExpPath source "ast"
+      validateTestOutput'' expPath actualOutput
+      
       let solution = Naive.drive . compile $ ast
       let actualOutput = show solution
       let expPath = mkExpPath source "naive"
@@ -54,6 +59,7 @@ validateTestOutput failingRef source contents expPath actualOutput = do
       writeIORef failingRef True
       putStrLn "There is no expected file."
       putStrLn $ showTestCase source contents
+      putStrLn ""
       putStrLn "Actual:"
       putStrLn actualOutput
       replaceExp expPath actualOutput
