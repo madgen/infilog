@@ -42,6 +42,7 @@ Constructors : Constructor                   { [ $1 ] }
              
 Constructor :: { (Constructor, [Ty]) }
 Constructor : id of Types                    { (Constructor $1, reverse $3) }
+Constructor : id                             { (Constructor $1, []) }
             
 Types :: { [Ty] }
 Types : Type                                 { [ $1 ] }
