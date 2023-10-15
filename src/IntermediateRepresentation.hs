@@ -5,8 +5,10 @@ module IntermediateRepresentation
     , Atom(..)
     , Predicate(..)
     , Term(..)
+    , Symbol(..)
     , Variable(..)
-    , Symbol(..)) where
+    , Identifier(..)
+    ) where
     
 import Prelude hiding (id, pred, head)
 import qualified Data.Text as T
