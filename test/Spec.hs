@@ -6,7 +6,6 @@ import           Control.Monad (when)
 import           System.Directory (listDirectory, doesFileExist)
 import           System.FilePath ((</>))
 import           System.Exit (exitFailure)
-import           AST (Program)
 import           Lexer (lex)
 import           Parser (parse)
 import           Compiler (compile)
@@ -15,6 +14,7 @@ import           Data.String (lines)
 import           Data.Algorithm.Diff (getGroupedDiff)
 import           Data.Algorithm.DiffOutput (ppDiff)
 import qualified Data.Text.IO as TIO
+import qualified Data.Text as T
 
 main :: IO ()
 main = do
@@ -33,7 +33,7 @@ main = do
           $ do
             writeIORef failingRef True
             putStrLn "Mismatch between expected and actual output."
-            putStrLn $ showTestCase source ast
+            putStrLn $ showTestCase source contents
             putStrLn $ "Diff (Expected at " <> expPath <> "):"
             let diff =
                   getGroupedDiff (lines expOutput) (lines actualOutput)
@@ -43,7 +43,7 @@ main = do
         Nothing        -> do
           writeIORef failingRef True
           putStrLn "There is no expected file."
-          putStrLn $ showTestCase source ast
+          putStrLn $ showTestCase source contents
           putStrLn "Actual:"
           putStrLn actualOutput
           replaceExp expPath actualOutput
@@ -67,13 +67,13 @@ findSources dir = do
   let infFiles = filter (".inf" `isSuffixOf`) files
   pure (map (dir </>) infFiles)
 
-showTestCase :: FilePath -> Program -> String
-showTestCase path ast = intercalate
+showTestCase :: FilePath -> T.Text -> String
+showTestCase path contents = intercalate
   "\n"
   [ "================================================================================"
-  , "AST for " <> path
+  , "Contents of " <> path
   , "================================================================================"
-  , show ast]
+  , T.unpack contents]
 
 replaceExp :: FilePath -> String -> IO ()
 replaceExp expPath expContents = do
