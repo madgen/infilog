@@ -8,7 +8,7 @@ module IntermediateRepresentation
     , Variable(..)
     , Symbol(..)) where
     
-import Prelude hiding (pred, head)
+import Prelude hiding (id, pred, head)
 import qualified Data.Text as T
 import Data.List (intercalate)
 
@@ -24,23 +24,31 @@ newtype Predicate = Predicate T.Text
 
 data Term = Sym Symbol
           | Var Variable
-  deriving (Eq, Ord)
-
-data Variable = Variable T.Text Int
+          | Id Identifier
   deriving (Eq, Ord)
 
 newtype Symbol = Symbol T.Text
   deriving (Eq, Ord)
+
+data Variable = Variable T.Text Int
+  deriving (Eq, Ord)
   
+newtype Identifier = Identifier Int
+  deriving (Eq, Ord)
+
 instance Show Symbol where
   show (Symbol sym) = "\"" <> T.unpack sym <> "\""
 
 instance Show Variable where
   show (Variable var n) = T.unpack var <> show n
+
+instance Show Identifier where
+  show (Identifier sym) = "#" <> show sym
   
 instance Show Term where
-  show (Var var) = show var
   show (Sym sym) = show sym
+  show (Var var) = show var
+  show (Id id) = show id
   
 instance Show Predicate where
   show (Predicate pred) = T.unpack pred

@@ -90,6 +90,9 @@ unify (Atom predicate terms) (Atom predicate' terms')
           Sym _  ->
             -- No substitution from constants
             pure Nothing
+          Id _   ->
+            -- No substitution from identifiers
+            pure Nothing
       pure $ Just $ M.fromList $ catMaybes bindings
 
     unifyTerm :: (Term, Term) -> EM.EquivM s Term Term Bool
@@ -124,6 +127,7 @@ specialiseTerms :: [Term] -> FreshM [Term]
 specialiseTerms terms = St.evalStateT (traverse go terms) M.empty
   where
     go t@Sym {} = pure t
+    go t@Id {} = pure t
     go (Var (Variable name n)) = do
       mapping <- St.get
       case (name, n) `M.lookup` mapping of
@@ -151,6 +155,7 @@ normaliseFact (Atom predicate terms) = Atom predicate simplifiedTerms
     simplifiedTerms = St.evalState (traverse simplifyTerm terms) (M.empty, 0)
 
     simplifyTerm t@Sym {} = pure t
+    simplifyTerm t@Id {} = pure t
     simplifyTerm (Var (Variable name n)) = do
       (mapping, ctr) <- St.get
       n' <- case (name, n) `M.lookup` mapping of
