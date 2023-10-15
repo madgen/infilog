@@ -1,5 +1,8 @@
 {-# LANGUAGE LambdaCase #-}
-module Decl (declare) where
+module Decl
+  ( TypeInfo(..)
+  , declare
+  ) where
 
 import qualified Data.Map.Strict as M
 import AST
@@ -10,7 +13,11 @@ import Data.Foldable (traverse_)
 import qualified Data.IntMap.Strict as IM
 
 type ConstructorStore = M.Map Constructor (IM.IntMap Ty)
-type DeclStore = M.Map Ty ConstructorStore
+data TypeInfo = TypeInfo
+  { _numberOfParameters :: Int
+  , _constructorStore :: ConstructorStore
+  }
+type DeclStore = M.Map Ty TypeInfo
 
 declare :: Program -> Either String DeclStore
 declare entities = do
@@ -25,7 +32,12 @@ declareTy declaredTys store (Declaration ty cstrs) = do
     Just _ -> Left $ "The type `" <> show ty <> "` is already declared"
     Nothing -> do
       cstrStore <- foldM (declareConstructor declaredTys) M.empty cstrs
-      pure $ M.insert ty cstrStore store
+      let numParams = maximum $ (\(ConstructorDeclaration _ tys) -> length tys) <$> cstrs
+      let typeInfo = TypeInfo
+            { _numberOfParameters = numParams
+            , _constructorStore = cstrStore
+            }
+      pure $ M.insert ty typeInfo store
 
 declareConstructor :: S.Set Ty -> ConstructorStore -> ConstructorDeclaration -> Either String ConstructorStore
 declareConstructor declaredTys cstrStore (ConstructorDeclaration cstr tys) =
