@@ -6,6 +6,8 @@ import           Parser (parse)
 import           Decl (declare)
 import qualified Naive
 import           Compiler (compile)
+import           Decompiler (decompileAtom)
+import qualified KnowledgeBase as KB
 import qualified Data.Text.IO as T
 
 main :: IO ()
@@ -15,5 +17,5 @@ main = do
   case declare ast of
     Left err -> error err
     Right decls -> do
-      let ir = compile decls ast
-      print $ Naive.drive ir
+      let (ir, adtMap) = compile decls ast
+      print $ KB.map (decompileAtom decls adtMap) $ Naive.drive ir

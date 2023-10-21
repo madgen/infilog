@@ -10,12 +10,14 @@ import           System.Exit (exitFailure)
 import           Lexer (lex)
 import           Parser (parse)
 import           Compiler (compile)
+import           Decompiler (decompileAtom)
 import           Naive (drive)
 import           Data.String (lines)
 import           Data.Algorithm.Diff (getGroupedDiff)
 import           Data.Algorithm.DiffOutput (ppDiff)
 import qualified Data.Text.IO as TIO
 import qualified Data.Text as T
+import qualified KnowledgeBase as KB
 import Decl (declare)
 
 main :: IO ()
@@ -43,13 +45,13 @@ main = do
           let expPath = mkExpPath source "decl"
           validateTestOutput'' expPath actualOutput
           
-          let ir = compile decls ast
+          let (ir, adtMap) = compile decls ast
           let actualOutput = show ir
           let expPath = mkExpPath source "ir"
           validateTestOutput'' expPath actualOutput
 
           let solution = Naive.drive ir
-          let actualOutput = show solution
+          let actualOutput = show $ KB.map (decompileAtom decls adtMap) solution
           let expPath = mkExpPath source "naive"
           validateTestOutput'' expPath actualOutput
   failed <- readIORef failingRef

@@ -28,7 +28,9 @@ library
       AST
       Compiler
       Decl
+      Decompiler
       IntermediateRepresentation
+      KnowledgeBase
       Lexer
       Naive
       Parser

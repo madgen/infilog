@@ -12,17 +12,15 @@ import           Data.Maybe (catMaybes, fromMaybe)
 import qualified Control.Monad.Trans.State.Strict as St
 import           Control.Monad (foldM)
 import           Control.Monad.Trans.Class (lift)
-import           Data.List (intercalate)
+import qualified KnowledgeBase as KB
 
--- Atoms in the knowledge base might include variables. These are implicitly
--- universally quantified.
-newtype KnowledgeBase = KnowledgeBase KnowledgeBaseInternal
-type KnowledgeBaseInternal = S.Set Atom
+type KnowledgeBase = KB.KnowledgeBase Atom
+type KnowledgeBaseInternal = KB.KnowledgeBaseInternal Atom
 
 type Substitution = M.Map Term Term
 
 drive :: Program -> KnowledgeBase
-drive prog = KnowledgeBase $ go S.empty
+drive prog = KB.KnowledgeBase $ go S.empty
   where
     go kb = let kb' = step kb prog
             in if kb == kb'
@@ -164,6 +162,3 @@ normaliseFact (Atom predicate terms) = Atom predicate simplifiedTerms
           St.put (M.insert (name, n) ctr mapping, ctr + 1)
           pure ctr
       pure $ Var (Variable "" n')
-
-instance Show KnowledgeBase where
-  show (KnowledgeBase kb) = intercalate "\n" $ show <$> S.toList kb
