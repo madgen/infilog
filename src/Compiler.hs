@@ -19,27 +19,23 @@ import Control.Arrow (Arrow(first))
 type CompileM a = ADTMT (FreshMT (R.Reader DeclStore)) a
 
 compile :: DeclStore -> A.Program -> (IR.Program, ADTMap)
-compile declStore pr = (synthClauses <> clauses, adtMap)
-  where
-    synthClauses = (`IR.Clause` []) <$> concat synthAtomss
+compile declStore pr = first catMaybes
+                     $ (`R.runReader` declStore)
+                     $ (`S.evalStateT` 0)
+                     $ (`S.runStateT` M.empty)
+                     $ traverse compileEntity pr
 
-    ((clauses, synthAtomss), adtMap) = first (unzip . catMaybes)
-                                     $ (`R.runReader` declStore)
-                                     $ (`S.evalStateT` 0)
-                                     $ (`S.runStateT` M.empty)
-                                     $ traverse compileEntity pr
-
-compileEntity :: A.Entity -> CompileM (Maybe (IR.Clause, [IR.Atom]))
+compileEntity :: A.Entity -> CompileM (Maybe IR.Clause)
 compileEntity (A.EClause clause) = Just <$> compileClause clause
 compileEntity (A.EDeclaration _) = pure Nothing
 
-compileClause :: A.Clause -> CompileM (IR.Clause, [IR.Atom])
+compileClause :: A.Clause -> CompileM IR.Clause
 compileClause (A.Clause head body) = do
   (head', synthAtoms) <- compileAtom head
   (body', synthAtomss) <- unzip <$> traverse compileAtom body
   let synthAtoms' = concat $ synthAtoms : synthAtomss
   let body'' = synthAtoms' <> body'
-  pure (IR.Clause head' body'', synthAtoms')
+  pure $ IR.Clause head' body''
 
 compileAtom :: A.Atom -> CompileM (IR.Atom, [IR.Atom])
 compileAtom (A.Atom pred terms) = do
@@ -49,12 +45,11 @@ compileAtom (A.Atom pred terms) = do
 compileTerm :: A.Term -> CompileM (IR.Term, [IR.Atom])
 compileTerm (A.Sym sym) = pure (IR.Sym sym, [])
 compileTerm (A.Var var) = pure (IR.Var $ compileVariable var, [])
-compileTerm t@(A.Composite ty cstr terms) = do
-  id <- lift freshID
-  remember id t
+compileTerm (A.Composite ty cstr terms) = do
+  var <- lift freshVar
   (terms', atomss) <- unzip <$> traverse compileTerm terms
-  atom <- mkAtom ty (IR.Id id) cstr terms'
-  pure (IR.Id id, atom : concat atomss)
+  atom <- mkAtom ty (IR.Var var) cstr terms'
+  pure (IR.Var var, atom : concat atomss)
 
 mkAtom :: A.TyName -> IR.Term -> A.Constructor -> [IR.Term] -> CompileM IR.Atom
 mkAtom tyName id cstr terms = do
