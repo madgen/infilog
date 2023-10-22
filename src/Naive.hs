@@ -98,8 +98,9 @@ unify (Atom predicate terms) (Atom predicate' terms')
       t1' <- EM.classDesc t1
       t2' <- EM.classDesc t2
       case (t1', t2') of
-        (Sym sym, Sym sym') -> pure $ sym == sym'
-        _ -> EM.equate t1 t2 >> pure True
+        (Var{}, _) -> EM.equate t1 t2 >> pure True
+        (_, Var{}) -> EM.equate t1 t2 >> pure True
+        (_, _) -> pure $ t1' == t2'
 
 compSubst :: Substitution -> Substitution -> Substitution
 compSubst subst1 subst2 =
