@@ -4,7 +4,6 @@ module Compiler (compile, ADTMap) where
 
 import qualified AST as A
 import qualified IntermediateRepresentation as IR
-import Data.Maybe (catMaybes)
 import Prelude hiding (id, head, pred)
 import qualified Control.Monad.Trans.State.Strict as S
 import qualified Data.Text as T
@@ -15,27 +14,49 @@ import qualified Data.Map.Strict as M
 import Control.Monad (replicateM)
 import Data.Coerce (coerce)
 import Control.Arrow (Arrow(first))
+import qualified Control.Monad.Trans.Writer.Strict as W
 
-type CompileM a = ADTMT (FreshMT (R.Reader DeclStore)) a
+type CompileMT = ADTMT (FreshMT (R.Reader DeclStore))
+type CompileM a = CompileMT a
 
 compile :: DeclStore -> A.Program -> (IR.Program, ADTMap)
-compile declStore pr = first catMaybes
+compile declStore pr = first concat
                      $ (`R.runReader` declStore)
                      $ (`S.evalStateT` 0)
                      $ (`S.runStateT` M.empty)
                      $ traverse compileEntity pr
 
-compileEntity :: A.Entity -> CompileM (Maybe IR.Clause)
-compileEntity (A.EClause clause) = Just <$> compileClause clause
-compileEntity (A.EDeclaration _) = pure Nothing
+compileEntity :: A.Entity -> CompileM [IR.Clause]
+compileEntity (A.EClause clause) = compileClause clause
+compileEntity (A.EDeclaration _) = pure []
 
-compileClause :: A.Clause -> CompileM IR.Clause
-compileClause (A.Clause head body) = do
+compileClause :: A.Clause -> CompileM [IR.Clause]
+compileClause (A.Clause head body)
+  | A.Atom pred [term] <- head, isTabulate pred = do
+    fmap (`IR.Clause` []) <$> tabulate term
+  | otherwise = do
   (head', synthAtoms) <- compileAtom head
   (body', synthAtomss) <- unzip <$> traverse compileAtom body
   let synthAtoms' = concat $ synthAtoms : synthAtomss
   let body'' = synthAtoms' <> body'
-  pure $ IR.Clause head' body''
+  pure [IR.Clause head' body'']
+
+tabulate :: A.Term -> CompileM [IR.Atom]
+tabulate term = snd <$> W.runWriterT (go term)
+  where
+  go :: A.Term -> W.WriterT [IR.Atom] CompileMT IR.Term
+  go A.Var{} = error "ICE: there shouldn't be any variables in a tabulated term."
+  go (A.Sym sym) = pure $ IR.Sym (coerce sym)
+  go t@(A.Composite ty cstr terms) = do
+    id <- lift . lift $ freshID
+    lift $ remember id t
+    terms' <- traverse go terms
+    atom <- lift $ mkAtom ty (IR.Id id) cstr terms'
+    W.tell [atom]
+    pure $ IR.Id id
+
+isTabulate :: A.Predicate -> Bool
+isTabulate = (== A.Predicate "tabulate")
 
 compileAtom :: A.Atom -> CompileM (IR.Atom, [IR.Atom])
 compileAtom (A.Atom pred terms) = do

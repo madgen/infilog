@@ -1,5 +1,8 @@
 type N = Z | S of N
 
+% Generate facts for all numbers up to five
+tabulate(N.Z).
+
 lte(N.Z, N.Z).
 lte(N.S(x), N.S(y)) :- lte(x, y).
 lte(x, N.S(y)) :- lte(x, y).
