@@ -24,9 +24,10 @@ data Atom = Atom Predicate [Term]
 newtype Predicate = Predicate T.Text
   deriving (Eq, Ord)
 
+-- The ordering of terms is significant and is relied upon by union-find
 data Term = Sym Symbol
-          | Var Variable
           | Id Identifier
+          | Var Variable
   deriving (Eq, Ord)
 
 newtype Symbol = Symbol T.Text

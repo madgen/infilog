@@ -1,7 +1,11 @@
-N(#0, "Z", iv10).
-lte(iv20, iv40) :- N(iv20, "Z", iv30), N(iv40, "Z", iv50).
-lte(iv60, iv70) :- N(iv60, "S", x0), N(iv70, "S", y0), lte(x0, y0).
-lte(x0, iv80) :- N(iv80, "S", y0), lte(x0, y0).
-two_less_than_equal_to_two() :- N(iv90, "S", iv100), N(iv100, "S", iv110), N(iv110, "Z", iv120), N(iv130, "S", iv140), N(iv140, "S", iv150), N(iv150, "S", iv160), N(iv160, "S", iv170), N(iv170, "Z", iv180), lte(iv90, iv130).
-four_less_than_equal_to_two() :- N(iv190, "S", iv200), N(iv200, "S", iv210), N(iv210, "S", iv220), N(iv220, "S", iv230), N(iv230, "Z", iv240), N(iv250, "S", iv260), N(iv260, "S", iv270), N(iv270, "Z", iv280), lte(iv190, iv250).
-x_less_than_equal_to_x_plus_two() :- N(iv290, "S", iv300), N(iv300, "S", x0), lte(x0, iv290).
+N(#4, "Z", iv50).
+N(#3, "S", #4).
+N(#2, "S", #3).
+N(#1, "S", #2).
+N(#0, "S", #1).
+lte(iv60, iv80) :- N(iv60, "Z", iv70), N(iv80, "Z", iv90).
+lte(iv100, iv110) :- N(iv100, "S", x0), N(iv110, "S", y0), lte(x0, y0).
+lte(x0, iv120) :- N(iv120, "S", y0), lte(x0, y0).
+two_less_than_equal_to_two() :- N(iv130, "S", iv140), N(iv140, "S", iv150), N(iv150, "Z", iv160), N(iv170, "S", iv180), N(iv180, "S", iv190), N(iv190, "S", iv200), N(iv200, "S", iv210), N(iv210, "Z", iv220), lte(iv130, iv170).
+four_less_than_equal_to_two() :- N(iv230, "S", iv240), N(iv240, "S", iv250), N(iv250, "S", iv260), N(iv260, "S", iv270), N(iv270, "Z", iv280), N(iv290, "S", iv300), N(iv300, "S", iv310), N(iv310, "Z", iv320), lte(iv230, iv290).
+x_less_than_equal_to_x_plus_two() :- N(iv330, "S", iv340), N(iv340, "S", x0), lte(x0, iv330).
