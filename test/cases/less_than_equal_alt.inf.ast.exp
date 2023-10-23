@@ -1,0 +1,7 @@
+type N = Z | S of N
+tabulate(N.S(N.S(N.S(N.S(N.Z))))).
+lte(x, x).
+lte(x, N.S(y)) :- lte(x, y).
+two_less_than_equal_to_two() :- lte(N.S(N.S(N.Z)), N.S(N.S(N.S(N.S(N.Z))))).
+four_less_than_equal_to_two() :- lte(N.S(N.S(N.S(N.S(N.Z)))), N.S(N.S(N.Z))).
+x_less_than_equal_to_x_plus_two() :- lte(x, N.S(N.S(x))).
